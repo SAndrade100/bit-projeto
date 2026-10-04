@@ -1,0 +1,16 @@
+# Segredos locais (use .env.example como modelo)
+.env
+
+# Editores e SO
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+
+# Artefatos de build (também ignorados em backend/ e frontend/)
+target/
+node_modules/
+dist/
