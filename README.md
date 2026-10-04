@@ -19,7 +19,7 @@ Colaboradores registram demandas internas e acompanham sua evolução (Aberto �
 Requer [Docker](https://docs.docker.com/get-docker/) com o plugin Compose.
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/SAndrade100/bit-projeto
 cd bit_projeto
 docker compose up --build
 ```
