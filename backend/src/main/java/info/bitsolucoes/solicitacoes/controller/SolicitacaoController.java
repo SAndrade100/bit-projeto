@@ -44,7 +44,7 @@ public class SolicitacaoController {
             @RequestParam(required = false) Short categoriaId,
             @RequestParam(required = false) StatusSolicitacao status,
             @RequestParam(required = false) String titulo,
-            @RequestParam(defaultValue = "0") @Min(0) int pagina,
+            @RequestParam(defaultValue = "0") @Min(0) @Max(100000) int pagina,
             @RequestParam(defaultValue = "10") @Min(1) @Max(50) int tamanho,
             @AuthenticationPrincipal UsuarioAutenticado usuario) {
         var filtro = new FiltroSolicitacao(dataInicio, dataFim, categoriaId, status, titulo);

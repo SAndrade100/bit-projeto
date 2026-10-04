@@ -36,6 +36,11 @@ export class Form implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
 
   protected readonly edicao = computed(() => this.id() !== undefined);
+  /** Em /solicitacoes/abc/editar o id vira NaN: não há o que editar. */
+  protected readonly idInvalido = computed(() => {
+    const id = this.id();
+    return id !== undefined && !(Number.isInteger(id) && id > 0);
+  });
   protected readonly categorias = signal<Categoria[]>([]);
   protected readonly carregando = signal(false);
   protected readonly enviando = signal(false);
@@ -54,6 +59,10 @@ export class Form implements OnInit {
   ngOnInit(): void {
     const id = this.id();
     if (id === undefined) return;
+    if (this.idInvalido()) {
+      this.erro.set('Solicitação não encontrada.');
+      return;
+    }
 
     this.carregando.set(true);
     this.api.buscar(id).subscribe({

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -82,6 +83,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Um ou mais campos são inválidos.");
         problema.setProperty("erros", erros);
         return ResponseEntity.badRequest().body(problema);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        return ResponseEntity.badRequest().body(problema(HttpStatus.BAD_REQUEST, "Requisição inválida",
+                "O corpo da requisição está ausente ou mal formatado."));
     }
 
     private ProblemDetail problema(HttpStatus status, String titulo, String detalhe) {

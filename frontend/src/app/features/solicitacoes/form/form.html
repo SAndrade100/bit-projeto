@@ -8,6 +8,8 @@
 
 @if (carregando()) {
   <mat-spinner diameter="32" />
+} @else if (idInvalido()) {
+  <a matButton routerLink="/solicitacoes">Voltar à lista</a>
 } @else {
   <form [formGroup]="form" (ngSubmit)="salvar()" class="formulario">
     <mat-form-field appearance="outline">

@@ -40,6 +40,11 @@ export class Detalhe implements OnInit {
   protected readonly processando = signal(false);
 
   ngOnInit(): void {
+    // /solicitacoes/abc chega aqui como NaN: não vale a pena (nem faz sentido) consultar a API.
+    if (!Number.isInteger(this.id()) || this.id() <= 0) {
+      this.erro.set('Solicitação não encontrada.');
+      return;
+    }
     this.api.buscar(this.id()).subscribe({
       next: (s) => this.solicitacao.set(s),
       error: (e) => this.erro.set(mensagemDeErro(e)),

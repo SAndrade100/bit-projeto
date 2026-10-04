@@ -59,6 +59,13 @@ class AuthApiTest {
     }
 
     @Test
+    void loginComCaractereNuloNoUsuarioRetorna400EmVezDeErroDeBanco() throws Exception {
+        mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"ana\\u0000\",\"password\":\"x\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void loginSemTokenCsrfEhRejeitado() throws Exception {
         mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"ana.silva\",\"password\":\"senha123\"}"))

@@ -106,10 +106,21 @@ class SolicitacaoApiTest {
     }
 
     @Test
-    void jsonMalformadoRetorna400() throws Exception {
+    void jsonMalformadoRetorna400ComMensagemEmPortugues() throws Exception {
         mvc.perform(post("/api/solicitacoes").with(como(ana)).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content("{titulo"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value("O corpo da requisição está ausente ou mal formatado."));
+    }
+
+    @Test
+    void caractereNulNosTextosRetorna400EmVezDeErroDeBanco() throws Exception {
+        mvc.perform(post("/api/solicitacoes").with(como(ana)).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"titulo\":\"a\\u0000b\",\"descricao\":\"x\\u0000\",\"categoriaId\":%d}".formatted(ti.getId())))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erros.titulo").exists())
+                .andExpect(jsonPath("$.erros.descricao").exists());
     }
 
     @Test
@@ -279,6 +290,9 @@ class SolicitacaoApiTest {
         mvc.perform(get("/api/solicitacoes").with(como(ana)).param("dataInicio", "ontem"))
                 .andExpect(status().isBadRequest());
         mvc.perform(get("/api/solicitacoes").with(como(ana)).param("tamanho", "1000"))
+                .andExpect(status().isBadRequest());
+        // offset (pagina * tamanho) estouraria o limite de inteiro do Spring Data e viraria 500
+        mvc.perform(get("/api/solicitacoes").with(como(ana)).param("pagina", "2147483647").param("tamanho", "50"))
                 .andExpect(status().isBadRequest());
     }
 

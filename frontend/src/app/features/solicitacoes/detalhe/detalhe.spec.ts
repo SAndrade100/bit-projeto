@@ -35,6 +35,20 @@ describe('Detalhe', () => {
     return (fixture.nativeElement as HTMLElement).textContent ?? '';
   }
 
+  it('id inválido na URL mostra "não encontrada" sem consultar a API', async () => {
+    const buscar = vi.fn();
+    TestBed.configureTestingModule({
+      imports: [Detalhe],
+      providers: [provideRouter([]), { provide: SolicitacaoService, useValue: { buscar } }],
+    });
+    const fixture = TestBed.createComponent(Detalhe);
+    fixture.componentRef.setInput('id', 'abc');
+    await fixture.whenStable();
+
+    expect(buscar).not.toHaveBeenCalled();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Solicitação não encontrada.');
+  });
+
   it('mostra editar, excluir e iniciar atendimento para o dono de uma solicitação aberta', async () => {
     const texto = await renderizar(solicitacao({}));
     expect(texto).toContain('Editar');

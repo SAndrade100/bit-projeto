@@ -202,7 +202,7 @@ para o domínio (que é o vocabulário do enunciado) e em inglês apenas para te
 ### 5.8 Segurança básica aplicada
 BCrypt para senhas; CSRF; sessão `HttpOnly`; troca de ID de sessão no login; consultas parametrizadas (JPA); escape de
 `%`/`_` na busca por título; entidades não expostas; mensagens de erro sem detalhes internos; usuário não-root no container;
-redirecionamento pós-login restrito a rotas internas; limite de tamanho de página (50).
+redirecionamento pós-login restrito a rotas internas; limites de página (50 itens e 100 000 páginas, evitando estouro de *offset*); rejeição do caractere NUL nos textos (o PostgreSQL não o aceita); cabeçalhos `X-Frame-Options`, `X-Content-Type-Options` e `Referrer-Policy` no nginx.
 
 ---
 
@@ -231,6 +231,7 @@ O enunciado deixa alguns pontos em aberto. Decisões tomadas:
 - **Sem anexos, comentários ou notificações**, comuns em portais de solicitação.
 - **Listagem:** ordenação fixa (mais recentes primeiro); o usuário não escolhe a coluna de ordenação.
 - **Frontend:** o *bundle* inicial tem ~650 kB (153 kB comprimido), acima do limite padrão do Angular (500 kB), e foi mantido com o orçamento ajustado para 700 kB; fontes e ícones vêm do Google Fonts (CDN), exigindo internet no navegador.
+- **Segurança do site:** não há *Content-Security-Policy*, pois o Angular Material e as fontes externas exigiriam uma política cuidadosa; em produção seria definida e testada.
 - **Testes:** não há testes de ponta a ponta no navegador (Playwright/Cypress); a verificação da interface foi manual e por testes de componente.
 
 ### Melhorias futuras
@@ -264,9 +265,9 @@ O enunciado deixa alguns pontos em aberto. Decisões tomadas:
 
 | Suíte | Quantidade | O que cobre |
 |---|---|---|
-| Backend (JUnit/MockMvc/Testcontainers) | 37 | Autenticação, CSRF, CRUD, permissões (403/409/404), fluxo de status, filtros (período inclusivo, status, categoria, título com escape de curingas), paginação, dashboard, validações (400), concorrência otimista, migrations e mapeamento JPA |
-| Frontend (Vitest) | 29 | Serviço de autenticação (inclui a reemissão do token CSRF no logout), guards, interceptor de 401, serviço de solicitações, utilitários, componentes (login, listagem, detalhe, chip de status) |
+| Backend (JUnit/MockMvc/Testcontainers) | 39 | Autenticação, CSRF, CRUD, permissões (403/409/404), fluxo de status, filtros (período inclusivo, status, categoria, título com escape de curingas), paginação, dashboard, validações (400), concorrência otimista, migrations e mapeamento JPA |
+| Frontend (Vitest) | 30 | Serviço de autenticação (inclui a reemissão do token CSRF no logout), guards, interceptor de 401, serviço de solicitações, utilitários, componentes (login, listagem, detalhe, chip de status) |
 
 Além dos testes automatizados, a aplicação completa foi executada via `docker compose up --build` e percorrida
-manualmente (login, criação, edição, avanço de status, filtros, exclusão, logout seguido de novo login, versão mobile). Uma revisão de código posterior encontrou e corrigiu três problemas: o logout apagava o token CSRF e fazia o login seguinte falhar, uma condição de corrida entre edição e mudança de status (corrigida com `@Version`) e filtros da listagem que não acompanhavam a URL. As capturas estão em
+manualmente (login, criação, edição, avanço de status, filtros, exclusão, logout seguido de novo login, versão mobile). Revisões de código posteriores, com testes de casos-limite contra a aplicação em execução, encontraram e corrigiram: o logout apagava o token CSRF e fazia o login seguinte falhar; uma condição de corrida entre edição e mudança de status (corrigida com `@Version`); filtros da listagem que não acompanhavam a URL; erro 500 com o caractere NUL em textos e com número de página extremo (agora 400); ids inválidos na URL (`/solicitacoes/abc`) consultando a API; e ausência de cabeçalhos de segurança no site. As capturas estão em
 [`evidencias/`](evidencias).

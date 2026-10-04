@@ -79,9 +79,9 @@ cd backend && ./mvnw verify
 cd frontend && npm test -- --watch=false
 ```
 
-- **Backend: 37 testes** — regras de negócio e API de ponta a ponta contra PostgreSQL real (MockMvc + Testcontainers),
+- **Backend: 39 testes** — regras de negócio e API de ponta a ponta contra PostgreSQL real (MockMvc + Testcontainers),
   autenticação/CSRF, migrations e mapeamento JPA.
-- **Frontend: 29 testes** — serviços, guards, interceptor, utilitários e componentes principais (Vitest).
+- **Frontend: 30 testes** — serviços, guards, interceptor, utilitários e componentes principais (Vitest).
 - A CI (`.github/workflows/ci.yml`) executa os dois conjuntos a cada push/PR.
 
 ## Funcionalidades (requisitos do enunciado)
@@ -187,3 +187,4 @@ Versão para celular: [`10-listagem-mobile.png`](docs/evidencias/10-listagem-mob
 - **Alterei o código e nada mudou**: use `docker compose up --build` (sem `--build` as imagens antigas são reaproveitadas).
 - **Ícones aparecem como texto**: as fontes (Roboto e Material Icons) são carregadas do Google Fonts; é necessário acesso à internet no navegador.
 - **Recomeçar com o banco vazio**: `docker compose down -v && docker compose up --build`.
+- **Mudei a senha/usuário do banco no `.env` e a API não conecta**: o volume `pgdata` guarda as credenciais antigas; recrie-o com `docker compose down -v`.
