@@ -1,0 +1,45 @@
+<header class="cabecalho">
+  <h1>Dashboard</h1>
+  <a matButton="filled" routerLink="/solicitacoes/nova">Nova solicitação</a>
+</header>
+
+@if (erro(); as mensagem) {
+  <p class="erro" role="alert">{{ mensagem }}</p>
+} @else if (indicadores(); as dados) {
+  <section class="cartoes" aria-label="Indicadores">
+    <a class="link" routerLink="/solicitacoes">
+      <mat-card appearance="outlined" class="total">
+        <mat-card-content>
+          <span class="numero">{{ dados.total }}</span>
+          <span class="rotulo">Total de solicitações</span>
+        </mat-card-content>
+      </mat-card>
+    </a>
+    <a class="link" routerLink="/solicitacoes" [queryParams]="{ status: 'ABERTO' }">
+      <mat-card appearance="outlined" class="aberto">
+        <mat-card-content>
+          <span class="numero">{{ dados.abertas }}</span>
+          <span class="rotulo">Abertas</span>
+        </mat-card-content>
+      </mat-card>
+    </a>
+    <a class="link" routerLink="/solicitacoes" [queryParams]="{ status: 'EM_ATENDIMENTO' }">
+      <mat-card appearance="outlined" class="atendimento">
+        <mat-card-content>
+          <span class="numero">{{ dados.emAtendimento }}</span>
+          <span class="rotulo">Em atendimento</span>
+        </mat-card-content>
+      </mat-card>
+    </a>
+    <a class="link" routerLink="/solicitacoes" [queryParams]="{ status: 'CONCLUIDO' }">
+      <mat-card appearance="outlined" class="concluido">
+        <mat-card-content>
+          <span class="numero">{{ dados.concluidas }}</span>
+          <span class="rotulo">Concluídas</span>
+        </mat-card-content>
+      </mat-card>
+    </a>
+  </section>
+} @else {
+  <mat-spinner diameter="32" />
+}

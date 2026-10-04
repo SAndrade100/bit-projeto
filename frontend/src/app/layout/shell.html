@@ -1,0 +1,17 @@
+<mat-toolbar class="barra">
+  <span class="marca">Portal de Solicitações</span>
+  <nav class="menu" aria-label="Navegação principal">
+    <a matButton routerLink="/dashboard" routerLinkActive="ativo">Dashboard</a>
+    <a matButton routerLink="/solicitacoes" routerLinkActive="ativo">Solicitações</a>
+  </nav>
+  <span class="espaco"></span>
+  <span class="usuario">{{ auth.usuario()?.nome }}</span>
+  <button matButton (click)="sair()">
+    <mat-icon>logout</mat-icon>
+    Sair
+  </button>
+</mat-toolbar>
+
+<main class="conteudo">
+  <router-outlet />
+</main>

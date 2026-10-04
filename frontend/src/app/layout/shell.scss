@@ -1,0 +1,35 @@
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 8px;
+  flex-wrap: wrap;
+  height: auto;
+  min-height: 64px;
+  background: var(--mat-sys-surface-container);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.marca {
+  margin-right: 16px;
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-primary);
+}
+
+.menu a.ativo {
+  background: var(--mat-sys-secondary-container);
+}
+
+.espaco {
+  flex: 1;
+}
+
+.usuario {
+  font-size: 0.875rem;
+}
+
+.conteudo {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}

@@ -1,0 +1,45 @@
+<div class="pagina">
+  <mat-card class="cartao">
+    <mat-card-header>
+      <mat-card-title>Portal de Solicitações</mat-card-title>
+      <mat-card-subtitle>Entre com seu usuário e senha</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (sessaoExpirada) {
+        <p class="aviso" role="status">Sua sessão expirou. Entre novamente.</p>
+      }
+      @if (erro(); as mensagem) {
+        <p class="erro" role="alert">{{ mensagem }}</p>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="entrar()" id="form-login">
+        <mat-form-field appearance="outline">
+          <mat-label>Usuário</mat-label>
+          <input matInput formControlName="username" autocomplete="username" autofocus />
+          @if (form.controls.username.hasError('required')) {
+            <mat-error>Informe o usuário</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Senha</mat-label>
+          <input matInput type="password" formControlName="password" autocomplete="current-password" />
+          @if (form.controls.password.hasError('required')) {
+            <mat-error>Informe a senha</mat-error>
+          }
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button matButton="filled" type="submit" form="form-login" [disabled]="enviando()">
+        @if (enviando()) {
+          <mat-spinner diameter="18" />
+        } @else {
+          Entrar
+        }
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -1,0 +1,61 @@
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font: var(--mat-sys-headline-medium);
+  }
+}
+
+.cartoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
+  border-radius: 12px;
+}
+
+mat-card {
+  border-left-width: 6px;
+  transition: box-shadow 0.15s;
+}
+
+.link:hover mat-card,
+.link:focus-visible mat-card {
+  box-shadow: var(--mat-sys-level2);
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px !important;
+}
+
+.numero {
+  font: var(--mat-sys-display-small);
+}
+
+.rotulo {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.total { border-left-color: #475569; }
+.aberto { border-left-color: #2563eb; }
+.atendimento { border-left-color: #d97706; }
+.concluido { border-left-color: #059669; }
+
+.erro {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}

@@ -1,0 +1,60 @@
+@if (erro(); as mensagem) {
+  <p class="erro" role="alert">{{ mensagem }}</p>
+  <a matButton routerLink="/solicitacoes">Voltar à lista</a>
+} @else if (solicitacao(); as s) {
+  <header class="cabecalho">
+    <div>
+      <span class="codigo">{{ s.codigo }}</span>
+      <h1>{{ s.titulo }}</h1>
+    </div>
+    <app-status-chip [status]="s.status" />
+  </header>
+
+  <dl class="dados">
+    <div>
+      <dt>Categoria</dt>
+      <dd>{{ s.categoria.nome }}</dd>
+    </div>
+    <div>
+      <dt>Solicitante</dt>
+      <dd>{{ s.solicitante.nome }}</dd>
+    </div>
+    <div>
+      <dt>Data de abertura</dt>
+      <dd>{{ s.criadoEm | date: 'dd/MM/yyyy HH:mm' }}</dd>
+    </div>
+    <div>
+      <dt>Última atualização</dt>
+      <dd>{{ s.atualizadoEm | date: 'dd/MM/yyyy HH:mm' }}</dd>
+    </div>
+  </dl>
+
+  <h2>Descrição</h2>
+  <p class="descricao">{{ s.descricao }}</p>
+
+  <div class="acoes">
+    <a matButton routerLink="/solicitacoes">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+    </a>
+    <span class="espaco"></span>
+
+    @if (s.editavel) {
+      <a matButton [routerLink]="['/solicitacoes', s.id, 'editar']">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </a>
+      <button matButton class="perigo" (click)="excluir(s)" [disabled]="processando()">
+        <mat-icon>delete</mat-icon>
+        Excluir
+      </button>
+    }
+    @if (s.proximoStatus) {
+      <button matButton="filled" (click)="avancar(s)" [disabled]="processando()">
+        {{ rotuloAvanco(s) }}
+      </button>
+    }
+  </div>
+} @else {
+  <mat-spinner diameter="32" />
+}
