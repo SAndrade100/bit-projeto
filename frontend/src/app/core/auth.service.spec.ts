@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from './auth.service';
 
 const ANA = { id: 1, username: 'ana.silva', nome: 'Ana Silva' };
@@ -44,6 +45,19 @@ describe('AuthService', () => {
     auth.logout().subscribe();
     http.expectOne('/api/auth/logout').flush(null, { status: 204, statusText: 'No Content' });
     expect(auth.usuario()).toBeNull();
+    // Reemite o cookie CSRF apagado pelo logout (senão o próximo login seria rejeitado).
+    http.expectOne('/api/auth/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+  });
+
+  it('logout só conclui depois de consultar a sessão (reemitindo o token CSRF)', async () => {
+    const logout = firstValueFrom(auth.logout(), { defaultValue: undefined });
+    http.expectOne('/api/auth/logout').flush(null, { status: 204, statusText: 'No Content' });
+    // o GET /api/auth/me é disparado em seguida e só então o logout termina
+    await Promise.resolve();
+    http.expectOne('/api/auth/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    await logout;
+    expect(auth.autenticado()).toBe(false);
   });
 
   it('não guarda usuário se o login falhar', () => {

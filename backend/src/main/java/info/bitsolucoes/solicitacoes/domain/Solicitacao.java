@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,6 +56,14 @@ public class Solicitacao {
 
     @Column(name = "atualizado_em", nullable = false)
     private OffsetDateTime atualizadoEm;
+
+    /**
+     * Controle de concorrência otimista: se outra transação alterar a linha entre a leitura e a gravação
+     * (ex.: edição simultânea a uma mudança de status), a gravação falha em vez de sobrescrever em silêncio.
+     */
+    @Version
+    @Column(nullable = false)
+    private Long versao;
 
     public Solicitacao(String titulo, String descricao, Categoria categoria, Usuario solicitante) {
         this.titulo = titulo;

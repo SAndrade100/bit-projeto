@@ -81,6 +81,7 @@ public class SolicitacaoService {
 
     public void excluir(Long id, Long usuarioId) {
         solicitacoes.delete(obterEditavel(id, usuarioId, "excluídas"));
+        solicitacoes.flush();
     }
 
     /** Qualquer usuário autenticado pode avançar o status, mas apenas para o próximo passo do fluxo. */

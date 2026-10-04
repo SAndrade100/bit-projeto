@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -72,12 +73,14 @@ export class Lista {
   constructor() {
     this.api.categorias().subscribe((lista) => this.categorias.set(lista));
 
-    // O dashboard leva aqui com ?status=... para listar um grupo específico.
-    const status = this.rota.snapshot.queryParamMap.get('status');
-    if (STATUS_OPCOES.some((o) => o.valor === status)) {
-      this.form.patchValue({ status: status as StatusSolicitacao });
-    }
-    this.filtrar();
+    // O dashboard leva aqui com ?status=... para listar um grupo específico. A query string é observada
+    // (e não lida uma vez) porque o menu reaproveita este componente ao navegar para /solicitacoes sem parâmetros.
+    this.rota.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
+      const status = params.get('status');
+      const valido = STATUS_OPCOES.some((o) => o.valor === status);
+      this.form.reset({ status: valido ? (status as StatusSolicitacao) : null });
+      this.filtrar();
+    });
   }
 
   protected filtrar(): void {

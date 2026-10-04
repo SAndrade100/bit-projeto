@@ -79,9 +79,9 @@ cd backend && ./mvnw verify
 cd frontend && npm test -- --watch=false
 ```
 
-- **Backend: 35 testes** — regras de negócio e API de ponta a ponta contra PostgreSQL real (MockMvc + Testcontainers),
+- **Backend: 37 testes** — regras de negócio e API de ponta a ponta contra PostgreSQL real (MockMvc + Testcontainers),
   autenticação/CSRF, migrations e mapeamento JPA.
-- **Frontend: 25 testes** — serviços, guards, interceptor, utilitários e componentes principais (Vitest).
+- **Frontend: 29 testes** — serviços, guards, interceptor, utilitários e componentes principais (Vitest).
 - A CI (`.github/workflows/ci.yml`) executa os dois conjuntos a cada push/PR.
 
 ## Funcionalidades (requisitos do enunciado)

@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -45,6 +46,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RequisicaoInvalidaException.class)
     ProblemDetail requisicaoInvalida(RequisicaoInvalidaException ex) {
         return problema(HttpStatus.BAD_REQUEST, "Requisição inválida", ex.getMessage());
+    }
+
+    /** Outra pessoa alterou a mesma solicitação no mesmo instante (ver @Version em Solicitacao). */
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    ProblemDetail conflitoDeVersao(OptimisticLockingFailureException ex) {
+        return problema(HttpStatus.CONFLICT, "Conflito de edição",
+                "A solicitação foi alterada por outra pessoa. Atualize a página e tente novamente.");
     }
 
     @ExceptionHandler(AuthenticationException.class)

@@ -1,7 +1,7 @@
 # MEMORIAL TÉCNICO DE DESENVOLVIMENTO
 
-**Projeto:** Portal de Solicitações Internas — 2ª etapa do processo seletivo, Desenvolvedor(a) de Sistemas Júnior (bit Soluções)
-**Candidato:** Samuel Andrade de Araújo
+**Projeto:** Portal de Solicitações Internas — 2ª etapa do processo seletivo, Desenvolvedor(a) de Sistemas Júnior (bit Soluções)  
+**Candidato:** Samuel Andrade de Araújo  
 **Data de entrega:** 05/10/2026
 
 ---
@@ -148,6 +148,7 @@ Decisões:
 - **Categorias em tabela**: a lista pode evoluir sem alterar código.
 - **Código (`SOL-000123`) derivado do `id`**, e não uma coluna: evita duplicidade e dessincronia.
 - **`TIMESTAMPTZ`** em todas as datas, evitando ambiguidade de fuso nos filtros por período.
+- **Controle de concorrência otimista** (`@Version`, coluna `versao`): duas gravações simultâneas na mesma solicitação (por exemplo, a edição de um usuário e o avanço de status de outro) não se sobrescrevem; a segunda recebe HTTP 409 com orientação para atualizar a página. Sem isso, o `UPDATE` de colunas completas do Hibernate poderia reverter um status recém-alterado.
 - **Constraints no banco** (não nulos, `CHECK`, FKs, unicidade) como última linha de defesa, além das validações da aplicação.
 - **Índices** em status, categoria, solicitante e data de criação, que são os critérios de filtro.
 
@@ -263,9 +264,9 @@ O enunciado deixa alguns pontos em aberto. Decisões tomadas:
 
 | Suíte | Quantidade | O que cobre |
 |---|---|---|
-| Backend (JUnit/MockMvc/Testcontainers) | 35 | Autenticação, CSRF, CRUD, permissões (403/409/404), fluxo de status, filtros (período inclusivo, status, categoria, título com escape de curingas), paginação, dashboard, validações (400), migrations e mapeamento JPA |
-| Frontend (Vitest) | 25 | Serviço de autenticação, guards, interceptor de 401, serviço de solicitações, utilitários, componentes (login, detalhe, chip de status) |
+| Backend (JUnit/MockMvc/Testcontainers) | 37 | Autenticação, CSRF, CRUD, permissões (403/409/404), fluxo de status, filtros (período inclusivo, status, categoria, título com escape de curingas), paginação, dashboard, validações (400), concorrência otimista, migrations e mapeamento JPA |
+| Frontend (Vitest) | 29 | Serviço de autenticação (inclui a reemissão do token CSRF no logout), guards, interceptor de 401, serviço de solicitações, utilitários, componentes (login, listagem, detalhe, chip de status) |
 
 Além dos testes automatizados, a aplicação completa foi executada via `docker compose up --build` e percorrida
-manualmente (login, criação, edição, avanço de status, filtros, exclusão, logout, versão mobile). As capturas estão em
+manualmente (login, criação, edição, avanço de status, filtros, exclusão, logout seguido de novo login, versão mobile). Uma revisão de código posterior encontrou e corrigiu três problemas: o logout apagava o token CSRF e fazia o login seguinte falhar, uma condição de corrida entre edição e mudança de status (corrigida com `@Version`) e filtros da listagem que não acompanhavam a URL. As capturas estão em
 [`evidencias/`](evidencias).

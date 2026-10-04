@@ -7,6 +7,7 @@ Banco: **PostgreSQL 16**. O esquema é criado e versionado pelo **Flyway**; os s
 |---|---|
 | `V1__criar_tabelas.sql` | Tabelas, chaves, constraints e índices |
 | `V2__dados_iniciais.sql` | Categorias do enunciado e usuários de demonstração |
+| `V3__controle_de_versao.sql` | Coluna `versao` em `solicitacoes` (controle de concorrência otimista) |
 
 As migrations rodam automaticamente na subida da API. O Hibernate apenas **valida** o esquema (`ddl-auto=validate`).
 
@@ -47,11 +48,13 @@ Valores iniciais: TI, RH, Compras, Financeiro, Infraestrutura.
 | `status` | VARCHAR(20) | não | `ABERTO` (padrão), `EM_ATENDIMENTO` ou `CONCLUIDO` (`ck_solicitacoes_status`) |
 | `criado_em` | TIMESTAMPTZ | não | Data de abertura, definida pelo servidor |
 | `atualizado_em` | TIMESTAMPTZ | não | Última alteração, definida pelo servidor |
+| `versao` | BIGINT | não | Contador de versão (padrão 0), incrementado a cada alteração. Evita que duas gravações simultâneas se sobrescrevam |
 
 ### Regras e decisões de modelagem
 - **Status como texto com CHECK** em vez de tabela de domínio: são apenas três valores fixos, ligados à regra de negócio (o fluxo é sequencial: Aberto → Em Atendimento → Concluído), então ficam no enum Java e protegidos por constraint no banco.
 - **Categorias em tabela**, pois a lista pode evoluir sem alterar código.
 - **Código da solicitação não é coluna**: é derivado do `id`, o que evita duplicidade e dessincronia.
+- **Concorrência otimista (`versao`)**: se a linha mudou entre a leitura e a gravação (ex.: edição enquanto outro usuário avança o status), a gravação falha com HTTP 409 em vez de sobrescrever o dado mais novo.
 - **TIMESTAMPTZ** em todas as datas, para evitar ambiguidade de fuso horário nos filtros por período.
 
 ### Índices

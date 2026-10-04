@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,6 +73,19 @@ class SolicitacaoRepositoryTest {
             assertThat(item.getStatus()).isEqualTo(StatusSolicitacao.CONCLUIDO);
             assertThat(item.getTotal()).isEqualTo(1);
         });
+    }
+
+    @Test
+    void gravacaoSobreLeituraDesatualizadaFalhaEmVezDeSobrescreverOStatus() {
+        Solicitacao lida = solicitacoes.saveAndFlush(nova("Concorrência"));
+
+        // Outra transação avança o status (e a versão) depois da leitura acima.
+        jdbc.update("UPDATE solicitacoes SET status = 'EM_ATENDIMENTO', versao = versao + 1 WHERE id = ?", lida.getId());
+
+        // Edição baseada na leitura antiga: sem @Version, gravaria status = ABERTO de volta.
+        lida.setTitulo("Título editado sobre dados velhos");
+
+        assertThatThrownBy(() -> solicitacoes.flush()).isInstanceOf(ObjectOptimisticLockingFailureException.class);
     }
 
     private Solicitacao nova(String titulo) {

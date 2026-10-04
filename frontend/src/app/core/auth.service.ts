@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, catchError, firstValueFrom, of, tap } from 'rxjs';
+import { Observable, catchError, firstValueFrom, from, of, switchMap, tap } from 'rxjs';
 import { Usuario } from './models';
 
 /** Estado de autenticação baseado na sessão (cookie) mantida pela API. */
@@ -31,8 +31,15 @@ export class AuthService {
       .pipe(tap((usuario) => this._usuario.set(usuario)));
   }
 
+  /**
+   * O logout do servidor também apaga o cookie CSRF. Sem um novo token, o próximo login (feito sem recarregar
+   * a página) seria rejeitado; por isso consultamos a sessão em seguida, o que faz a API reemiti-lo.
+   */
   logout(): Observable<void> {
-    return this.http.post<void>('/api/auth/logout', null).pipe(tap(() => this.limparSessao()));
+    return this.http.post<void>('/api/auth/logout', null).pipe(
+      tap(() => this.limparSessao()),
+      switchMap(() => from(this.carregarSessao())),
+    );
   }
 
   /** Descarta o estado local (ex.: quando a API informa que a sessão expirou). */
