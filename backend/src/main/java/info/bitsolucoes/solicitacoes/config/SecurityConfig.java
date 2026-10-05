@@ -15,10 +15,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
-/**
- * Autenticação por sessão (cookie JSESSIONID) com proteção CSRF no padrão "double submit cookie":
- * a API publica o cookie XSRF-TOKEN e o Angular devolve o valor no cabeçalho X-XSRF-TOKEN.
- */
 @Configuration
 public class SecurityConfig {
 

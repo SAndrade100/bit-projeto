@@ -19,6 +19,5 @@ public record SolicitacaoRequest(
         @NotNull(message = "Informe a categoria")
         Short categoriaId) {
 
-    /** O PostgreSQL não aceita o caractere NUL (código 0) em textos; sem esta validação ele viraria erro 500. */
     private static final String SEM_NUL = "^[^\\u0000]*$";
 }

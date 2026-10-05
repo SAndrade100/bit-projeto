@@ -11,7 +11,6 @@ import { errosDeCampos, mensagemDeErro } from '../../../core/api-error';
 import { Categoria } from '../../../core/models';
 import { SolicitacaoService } from '../../../core/solicitacao.service';
 
-/** Formulário único para criar (/nova) e editar (/:id/editar) uma solicitação. */
 @Component({
   selector: 'app-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,7 +27,6 @@ import { SolicitacaoService } from '../../../core/solicitacao.service';
   styleUrl: './form.scss',
 })
 export class Form implements OnInit {
-  /** Parâmetro de rota :id (ligado por withComponentInputBinding); ausente ao criar. */
   readonly id = input(undefined, { transform: (v: unknown) => (v == null ? undefined : numberAttribute(v)) });
 
   private readonly api = inject(SolicitacaoService);
@@ -36,7 +34,6 @@ export class Form implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
 
   protected readonly edicao = computed(() => this.id() !== undefined);
-  /** Em /solicitacoes/abc/editar o id vira NaN: não há o que editar. */
   protected readonly idInvalido = computed(() => {
     const id = this.id();
     return id !== undefined && !(Number.isInteger(id) && id > 0);
@@ -109,7 +106,6 @@ export class Form implements OnInit {
     });
   }
 
-  /** Reflete nos campos as mensagens de validação devolvidas pela API. */
   private aplicarErrosDoServidor(erro: unknown): void {
     for (const [campo, mensagem] of Object.entries(errosDeCampos(erro))) {
       this.form.get(campo)?.setErrors({ servidor: mensagem });

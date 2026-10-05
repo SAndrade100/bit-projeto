@@ -20,10 +20,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-/**
- * Converte exceções em respostas de erro padronizadas (RFC 9457, application/problem+json).
- * Erros de validação trazem o mapa campo -> mensagem na propriedade {@code erros}.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -49,7 +45,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problema(HttpStatus.BAD_REQUEST, "Requisição inválida", ex.getMessage());
     }
 
-    /** Outra pessoa alterou a mesma solicitação no mesmo instante (ver @Version em Solicitacao). */
     @ExceptionHandler(OptimisticLockingFailureException.class)
     ProblemDetail conflitoDeVersao(OptimisticLockingFailureException ex) {
         return problema(HttpStatus.CONFLICT, "Conflito de edição",

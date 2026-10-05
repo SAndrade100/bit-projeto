@@ -4,10 +4,6 @@ import info.bitsolucoes.solicitacoes.domain.Solicitacao;
 import info.bitsolucoes.solicitacoes.domain.StatusSolicitacao;
 import java.time.OffsetDateTime;
 
-/**
- * {@code editavel} indica se o usuário atual pode editar/excluir (dono e status Aberto) e
- * {@code proximoStatus} qual a única transição permitida; assim o frontend não replica as regras.
- */
 public record SolicitacaoResponse(
         Long id,
         String codigo,

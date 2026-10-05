@@ -15,6 +15,7 @@ import info.bitsolucoes.solicitacoes.repository.FiltroSolicitacao;
 import info.bitsolucoes.solicitacoes.repository.SolicitacaoRepository;
 import info.bitsolucoes.solicitacoes.repository.SolicitacaoSpecs;
 import info.bitsolucoes.solicitacoes.repository.UsuarioRepository;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -22,13 +23,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Regras de negócio das solicitações. Todas as validações de permissão e de estado vivem aqui,
- * independentemente do que o frontend exibe.
- */
 @Service
 @Transactional
 public class SolicitacaoService {
+
+    private static final LocalDate DATA_MINIMA = LocalDate.of(1900, 1, 1);
+    private static final LocalDate DATA_MAXIMA = LocalDate.of(2999, 12, 31);
 
     private static final Sort ORDEM_PADRAO = Sort.by(Sort.Order.desc("criadoEm"), Sort.Order.desc("id"));
 
@@ -47,12 +47,20 @@ public class SolicitacaoService {
 
     @Transactional(readOnly = true)
     public PaginaResponse<SolicitacaoResponse> listar(FiltroSolicitacao filtro, int pagina, int tamanho, Long usuarioId) {
+        validarData(filtro.dataInicio());
+        validarData(filtro.dataFim());
         if (filtro.dataInicio() != null && filtro.dataFim() != null && filtro.dataInicio().isAfter(filtro.dataFim())) {
             throw new RequisicaoInvalidaException("A data inicial não pode ser posterior à data final.");
         }
         var page = solicitacoes.findAll(SolicitacaoSpecs.comFiltro(filtro, fuso),
                 PageRequest.of(pagina, tamanho, ORDEM_PADRAO));
         return PaginaResponse.de(page, s -> SolicitacaoResponse.de(s, usuarioId));
+    }
+
+    private static void validarData(LocalDate data) {
+        if (data != null && (data.isBefore(DATA_MINIMA) || data.isAfter(DATA_MAXIMA))) {
+            throw new RequisicaoInvalidaException("Informe datas entre 1900 e 2999.");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -84,7 +92,6 @@ public class SolicitacaoService {
         solicitacoes.flush();
     }
 
-    /** Qualquer usuário autenticado pode avançar o status, mas apenas para o próximo passo do fluxo. */
     public SolicitacaoResponse alterarStatus(Long id, StatusSolicitacao novoStatus, Long usuarioId) {
         Solicitacao solicitacao = obter(id);
         if (!solicitacao.getStatus().podeIrPara(novoStatus)) {
@@ -106,7 +113,6 @@ public class SolicitacaoService {
                 .orElseThrow(() -> new RequisicaoInvalidaException("Categoria %d não existe.".formatted(id)));
     }
 
-    /** Edição e exclusão: somente o solicitante e somente enquanto a solicitação está Aberta. */
     private Solicitacao obterEditavel(Long id, Long usuarioId, String acao) {
         Solicitacao solicitacao = obter(id);
         if (!solicitacao.getSolicitante().getId().equals(usuarioId)) {

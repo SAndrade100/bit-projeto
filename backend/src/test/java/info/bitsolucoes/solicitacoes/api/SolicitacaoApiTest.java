@@ -31,7 +31,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Testes de ponta a ponta da API (HTTP -> serviço -> PostgreSQL), revertidos ao fim de cada teste. */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
@@ -284,6 +283,11 @@ class SolicitacaoApiTest {
     @Test
     void periodoInvertidoOuParametroInvalidoRetornaBadRequest() throws Exception {
         mvc.perform(get("/api/solicitacoes").with(como(ana)).param("dataInicio", "2026-10-10").param("dataFim", "2026-10-01"))
+                .andExpect(status().isBadRequest());
+        // datas que o PostgreSQL não consegue representar viravam erro 500
+        mvc.perform(get("/api/solicitacoes").with(como(ana)).param("dataFim", "+999999999-12-31"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(get("/api/solicitacoes").with(como(ana)).param("dataInicio", "-4713-01-01"))
                 .andExpect(status().isBadRequest());
         mvc.perform(get("/api/solicitacoes").with(como(ana)).param("status", "XYZ"))
                 .andExpect(status().isBadRequest());

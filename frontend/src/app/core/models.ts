@@ -26,9 +26,7 @@ export interface Solicitacao {
   solicitante: Usuario;
   status: StatusSolicitacao;
   statusDescricao: string;
-  /** Único status para o qual a solicitação pode avançar (nulo se já concluída). */
   proximoStatus: StatusSolicitacao | null;
-  /** Verdadeiro se o usuário atual é o dono e a solicitação está aberta. */
   editavel: boolean;
   criadoEm: string;
   atualizadoEm: string;
@@ -63,7 +61,6 @@ export interface Dashboard {
   concluidas: number;
 }
 
-/** Corpo de erro da API (RFC 9457) com o mapa opcional de erros por campo. */
 export interface ProblemaApi {
   title?: string;
   detail?: string;

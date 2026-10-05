@@ -12,7 +12,6 @@ import { SolicitacaoService } from '../../../core/solicitacao.service';
 import { ConfirmDialog } from '../../../shared/confirm-dialog/confirm-dialog';
 import { StatusChip } from '../../../shared/status-chip/status-chip';
 
-/** Texto do botão que avança o fluxo, conforme o status de destino. */
 const ROTULO_AVANCO: Record<StatusSolicitacao, string> = {
   ABERTO: '',
   EM_ATENDIMENTO: 'Iniciar atendimento',
@@ -27,7 +26,6 @@ const ROTULO_AVANCO: Record<StatusSolicitacao, string> = {
   styleUrl: './detalhe.scss',
 })
 export class Detalhe implements OnInit {
-  /** Parâmetro de rota :id. */
   readonly id = input.required({ transform: numberAttribute });
 
   private readonly api = inject(SolicitacaoService);
@@ -40,7 +38,6 @@ export class Detalhe implements OnInit {
   protected readonly processando = signal(false);
 
   ngOnInit(): void {
-    // /solicitacoes/abc chega aqui como NaN: não vale a pena (nem faz sentido) consultar a API.
     if (!Number.isInteger(this.id()) || this.id() <= 0) {
       this.erro.set('Solicitação não encontrada.');
       return;

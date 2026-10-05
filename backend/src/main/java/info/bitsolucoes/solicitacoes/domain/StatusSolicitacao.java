@@ -2,10 +2,6 @@ package info.bitsolucoes.solicitacoes.domain;
 
 import java.util.Optional;
 
-/**
- * Ciclo de vida de uma solicitação. O fluxo é sequencial:
- * ABERTO -> EM_ATENDIMENTO -> CONCLUIDO.
- */
 public enum StatusSolicitacao {
     ABERTO("Aberto"),
     EM_ATENDIMENTO("Em Atendimento"),
@@ -21,7 +17,6 @@ public enum StatusSolicitacao {
         return descricao;
     }
 
-    /** Próximo status do fluxo, ou vazio se este já é o final. */
     public Optional<StatusSolicitacao> proximo() {
         return switch (this) {
             case ABERTO -> Optional.of(EM_ATENDIMENTO);

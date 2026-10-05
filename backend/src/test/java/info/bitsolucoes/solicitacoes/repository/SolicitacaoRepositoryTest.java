@@ -18,7 +18,6 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Valida o esquema criado pelo Flyway e o mapeamento JPA contra um PostgreSQL real. */
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @Transactional
@@ -79,10 +78,8 @@ class SolicitacaoRepositoryTest {
     void gravacaoSobreLeituraDesatualizadaFalhaEmVezDeSobrescreverOStatus() {
         Solicitacao lida = solicitacoes.saveAndFlush(nova("Concorrência"));
 
-        // Outra transação avança o status (e a versão) depois da leitura acima.
         jdbc.update("UPDATE solicitacoes SET status = 'EM_ATENDIMENTO', versao = versao + 1 WHERE id = ?", lida.getId());
 
-        // Edição baseada na leitura antiga: sem @Version, gravaria status = ABERTO de volta.
         lida.setTitulo("Título editado sobre dados velhos");
 
         assertThatThrownBy(() -> solicitacoes.flush()).isInstanceOf(ObjectOptimisticLockingFailureException.class);

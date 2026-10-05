@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-/** Principal da sessão: além do login, carrega o id e o nome para uso nas regras de negócio. */
 public class UsuarioAutenticado extends User {
 
     private final Long id;

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Login por JSON e consulta do usuário da sessão. O logout é tratado pelo Spring Security. */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -37,7 +36,6 @@ public class AuthController {
         Authentication autenticacao = authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(dados.username().trim(), dados.password()));
 
-        // Novo id de sessão após autenticar, evitando session fixation.
         if (request.getSession(false) != null) {
             request.changeSessionId();
         }

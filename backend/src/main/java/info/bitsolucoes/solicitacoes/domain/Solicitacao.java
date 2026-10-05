@@ -57,10 +57,6 @@ public class Solicitacao {
     @Column(name = "atualizado_em", nullable = false)
     private OffsetDateTime atualizadoEm;
 
-    /**
-     * Controle de concorrência otimista: se outra transação alterar a linha entre a leitura e a gravação
-     * (ex.: edição simultânea a uma mudança de status), a gravação falha em vez de sobrescrever em silêncio.
-     */
     @Version
     @Column(nullable = false)
     private Long versao;
@@ -72,7 +68,6 @@ public class Solicitacao {
         this.solicitante = solicitante;
     }
 
-    /** Código legível exibido ao usuário, derivado do id (ex.: SOL-000123). */
     public String getCodigo() {
         return id == null ? null : "SOL-%06d".formatted(id);
     }

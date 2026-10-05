@@ -53,7 +53,6 @@ export class Login {
     });
   }
 
-  /** Só aceita destinos internos, evitando redirecionamento para sites externos. */
   private destino(): string {
     const redirect = this.rota.snapshot.queryParamMap.get('redirect');
     return redirect?.startsWith('/') && !redirect.startsWith('//') ? redirect : '/dashboard';

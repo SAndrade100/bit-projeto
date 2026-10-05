@@ -22,14 +22,11 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    // O XSRF-TOKEN (cookie) é devolvido pela API no cabeçalho X-XSRF-TOKEN automaticamente
-    // pelo HttpClient, para requisições de escrita na mesma origem.
     provideHttpClient(withInterceptors([httpErrorInterceptor])),
     { provide: LOCALE_ID, useValue: 'pt-BR' },
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
     provideNativeDateAdapter(),
     { provide: MatPaginatorIntl, useClass: PaginatorIntlPt },
-    // Descobre se já há sessão antes de as rotas (e seus guards) serem avaliadas.
     provideAppInitializer(() => inject(AuthService).carregarSessao()),
   ],
 };

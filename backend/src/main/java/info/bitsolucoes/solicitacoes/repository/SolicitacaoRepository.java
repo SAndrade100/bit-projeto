@@ -14,12 +14,10 @@ import org.springframework.data.jpa.repository.Query;
 public interface SolicitacaoRepository
         extends JpaRepository<Solicitacao, Long>, JpaSpecificationExecutor<Solicitacao> {
 
-    /** Carrega categoria e solicitante na mesma consulta da listagem (evita N+1). */
     @Override
     @EntityGraph(attributePaths = {"categoria", "solicitante"})
     Page<Solicitacao> findAll(Specification<Solicitacao> spec, Pageable pageable);
 
-    /** Quantidade de solicitações por status (status sem registros não aparecem). */
     @Query("select s.status as status, count(s) as total from Solicitacao s group by s.status")
     List<ContagemPorStatus> contarPorStatus();
 

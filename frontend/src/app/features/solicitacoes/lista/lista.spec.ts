@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 import { SolicitacaoService } from '../../../core/solicitacao.service';
 import { Lista } from './lista';
 
@@ -50,5 +50,23 @@ describe('Lista', () => {
     await fixture.whenStable();
 
     expect(api.listar.mock.calls[0][0].status).toBeNull();
+  });
+
+  it('uma resposta atrasada não sobrescreve a da consulta mais recente', async () => {
+    const lenta = new Subject<typeof pagina>();
+    const rapida = new Subject<typeof pagina>();
+    api.listar.mockReset().mockReturnValueOnce(lenta).mockReturnValueOnce(rapida);
+
+    const fixture = TestBed.createComponent(Lista); // 1ª consulta (lenta) ao abrir
+    await fixture.whenStable();
+    params.next(convertToParamMap({ status: 'CONCLUIDO' })); // 2ª consulta (rápida)
+    await fixture.whenStable();
+
+    rapida.next({ ...pagina, totalElementos: 2 });
+    lenta.next({ ...pagina, totalElementos: 99 }); // chega depois, mas é de uma consulta antiga
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.textContent).not.toContain('99');
+    expect(lenta.observed).toBe(false); // a consulta antiga foi cancelada
   });
 });

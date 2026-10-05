@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AuthService } from '../core/auth.service';
 
-/** Moldura das telas autenticadas: barra superior com navegação e logout. */
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +19,6 @@ export class Shell {
   protected sair(): void {
     this.auth.logout().subscribe({
       next: () => this.router.navigate(['/login']),
-      // Mesmo se a chamada falhar, o usuário espera ser deslogado da interface.
       error: () => {
         this.auth.limparSessao();
         this.router.navigate(['/login']);

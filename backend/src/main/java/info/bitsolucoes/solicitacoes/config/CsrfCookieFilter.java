@@ -8,10 +8,6 @@ import java.io.IOException;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * O token CSRF é carregado sob demanda; ler o valor aqui força o envio do cookie XSRF-TOKEN
- * já na primeira resposta (mesmo um 401), para que o frontend possa usá-lo no login.
- */
 class CsrfCookieFilter extends OncePerRequestFilter {
 
     @Override

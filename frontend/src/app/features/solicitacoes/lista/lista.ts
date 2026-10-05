@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -67,14 +68,13 @@ export class Lista {
   protected readonly erro = signal<string | null>(null);
   protected readonly tamanho = signal(10);
 
-  /** Filtro efetivamente aplicado (o formulário só vale depois de "Filtrar"). */
   private filtroAplicado: FiltroSolicitacao = {};
+
+  private consulta?: Subscription;
 
   constructor() {
     this.api.categorias().subscribe((lista) => this.categorias.set(lista));
 
-    // O dashboard leva aqui com ?status=... para listar um grupo específico. A query string é observada
-    // (e não lida uma vez) porque o menu reaproveita este componente ao navegar para /solicitacoes sem parâmetros.
     this.rota.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
       const status = params.get('status');
       const valido = STATUS_OPCOES.some((o) => o.valor === status);
@@ -108,7 +108,8 @@ export class Lista {
   private carregar(pagina: number): void {
     this.carregando.set(true);
     this.erro.set(null);
-    this.api.listar(this.filtroAplicado, pagina, this.tamanho()).subscribe({
+    this.consulta?.unsubscribe();
+    this.consulta = this.api.listar(this.filtroAplicado, pagina, this.tamanho()).subscribe({
       next: (resultado) => {
         this.pagina.set(resultado);
         this.carregando.set(false);

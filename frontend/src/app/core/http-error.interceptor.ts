@@ -4,10 +4,6 @@ import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 
-/**
- * Se a API responder 401 em qualquer chamada (exceto as de autenticação, tratadas pela própria tela),
- * a sessão expirou: limpa o estado e leva o usuário ao login.
- */
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);

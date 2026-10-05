@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 
-/** Textos do paginador do Angular Material em português. */
 @Injectable()
 export class PaginatorIntlPt extends MatPaginatorIntl {
   override itemsPerPageLabel = 'Itens por página:';

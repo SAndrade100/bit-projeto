@@ -1,7 +1,7 @@
 # Portal de Solicitações Internas
 
 Mini-projeto Full Stack da 2ª etapa do processo seletivo para Desenvolvedor(a) de Sistemas Júnior da bit Soluções.
-Colaboradores registram demandas internas e acompanham sua evolução (Aberto → Em Atendimento → Concluído).
+Nesse sistema, os colaboradores de algum projeto sem escopo definido registram demandas internas e acompanham sua evolução (Aberto → Em Atendimento → Concluído).
 
 | Camada | Tecnologia |
 |---|---|
@@ -16,7 +16,7 @@ Colaboradores registram demandas internas e acompanham sua evolução (Aberto �
 
 ### Opção recomendada: Docker (único pré-requisito)
 
-Requer [Docker](https://docs.docker.com/get-docker/) com o plugin Compose.
+Requer [Docker](https://docs.docker.com/get-docker/) com o plugin Compose. Essa opção instala automaticamente via container docker, devem ocorrer falhas se as portas definidas estejam ocupadas.
 
 ```bash
 git clone https://github.com/SAndrade100/bit-projeto
@@ -51,7 +51,7 @@ Se alguma porta já estiver em uso, altere-a no `.env`.
 
 ### Execução em desenvolvimento (sem containers para a aplicação)
 
-Pré-requisitos: JDK 25, Node.js 24+ e Docker (apenas para o banco).
+Pré-requisitos: JDK 25, Node.js 24+ e Docker (apenas para o banco). 
 
 ```bash
 # 1. Banco
@@ -81,7 +81,7 @@ cd frontend && npm test -- --watch=false
 
 - **Backend: 39 testes** — regras de negócio e API de ponta a ponta contra PostgreSQL real (MockMvc + Testcontainers),
   autenticação/CSRF, migrations e mapeamento JPA.
-- **Frontend: 30 testes** — serviços, guards, interceptor, utilitários e componentes principais (Vitest).
+- **Frontend: 31 testes** — serviços, guards, interceptor, utilitários e componentes principais (Vitest).
 - A CI (`.github/workflows/ci.yml`) executa os dois conjuntos a cada push/PR.
 
 ## Funcionalidades (requisitos do enunciado)
